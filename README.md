@@ -78,14 +78,14 @@ Google claims there will be an "advanced flow" for experienced users. **Don't be
 - Can be revoked at any time
 
 ### Your Setup vs. Google's Promise
-| Feature | Google's "Advanced Flow" | Your Setup |
+| Feature | Google's "Advanced Flow" | My Setup |
 |---------|-------------------------|------------|
 | Exists now? | "May eventually" | ✓ YES |
 | Requires ID? | Likely | ✗ NO |
 | Requires fees? | Likely | ✗ NO |
 | Works offline? | Probably not | ✓ YES |
 | Can be revoked? | Yes | ✗ NO |
-| Works in Philippines? | Probably not | ✓ YES |
+| Works in many countries? | Probably not | ✓ YES |
 
 ---
 
