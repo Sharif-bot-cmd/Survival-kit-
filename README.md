@@ -755,3 +755,6 @@ You: "My phone is still free"
 - **F-Droid** - Free and open source app store
 - **GitHub** - Source code for all tools
 - **XDA Developers** - Community support
+
+## Legal & Transparency
+This project maintains transparent legal documentation and has established official communication with GitHub Support (Ticket: 3932406).
