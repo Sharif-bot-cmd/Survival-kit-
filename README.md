@@ -482,8 +482,8 @@ Preinstalled Apps to Remove:
 
 | Package | Purpose | Remove? |
 |---------|---------|--------|
-| `com.google.android.gms` | Play Services | NO (cause bootloop can be disable)|
-| `com.google.android.gsf` | Google Services | NO (may break login but can be disable) |
+| `com.google.android.gms` | Play Services | NO (keep at factory version)|
+| `com.google.android.gsf` | Google Services | NO (may break login but keep it) |
 | `com.oplus.statistics.rom` | Oppo telemetry | ✓ YES |
 | `com.qualcomm.location` | Qualcomm tracking | ✓ YES |
 | `com.oplus.engineermode` | Engineering backdoor | ✓ YES |
