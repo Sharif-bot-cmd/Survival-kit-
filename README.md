@@ -140,7 +140,6 @@ Google claims there will be an "advanced flow" for experienced users. **Don't be
 | **TrustMeAlready** | Bypasses SSL certificate pinning |
 | **Bootloader Spoofer** | Hides bootloader modifications |
 | **NoVPNDetect** | Prevents apps from detecting VPN usage |
-| **Integrity Verification Disabler** | Bypasses Play Integrity API (SafetyNet) checks |
 | **Sensor Disabler** | Disables specific sensors for privacy |
 
 ---
@@ -480,43 +479,6 @@ App runs happily, never knows the difference
 1. Download from [GitHub](https://github.com/MrChandler/DisableProx)
 2. Patch with LSPatch
 3. Install and enable
-
-### Integrity Verification Disabler (IV Disabler)
-**Module:** `com.alex193a.ivdisabler`
-
-**Purpose:** Disables Google Play Integrity API and SafetyNet attestation checks
-
-**Why you need it:**
-- **Play Integrity API** is Google's modern replacement for SafetyNet
-- This is the **primary mechanism** Google will use to enforce developer verification
-- Apps query Play Integrity to ask: "Is this device compliant?"
-- Google will return: "No, this device allows unverified apps—block it"
-- IV Disabler intercepts these queries and returns "device is compliant"
-
-**What Play Integrity Checks:**
-```
-Play Integrity API Queries:
-├── Device Integrity: Is this a certified Android device?
-├── Strong Integrity: Is bootloader locked? No modifications?
-├── App Integrity: Is this app from Play Store?
-└── VERIFIED DEVELOPER STATUS ← Google's 2026 addition
-    └── IV Disabler returns "verified = true" for ALL apps
-```
-
-**Why This Matters for 2026:**
-Google's developer verification will likely be enforced through Play Integrity. Apps will query:
-> "Is this app from a verified developer?"
-
-IV Disabler intercepts and answers:
-> "Yes, this app is verified" (regardless of actual status)
-
-**Installation:**
-1. Download from [GitHub](https://github.com/Xposed-Modules-Repo/com.alex193a.ivdisabler) or [Xposed Module Repository](https://forum.xda-developers.com/t/module-play-integrity-disabler.4640824/)
-2. Patch with LSPatch
-3. Install and enable in LSPatch manager
-4. Verify with Play Integrity API Checker app from Play Store (temporarily install to test, then remove)
-
-**Note:** Some banking apps use hardware-level attestation (Strong Integrity) that cannot be bypassed by software alone. IV Disabler handles the software layer; your locked bootloader and Common Criteria Mode handle the hardware layer.
 
 ---
 
