@@ -140,6 +140,7 @@ Google claims there will be an "advanced flow" for experienced users. **Don't be
 | **TrustMeAlready** | Bypasses SSL certificate pinning |
 | **Bootloader Spoofer** | Hides bootloader modifications |
 | **NoVPNDetect** | Prevents apps from detecting VPN usage |
+| **Integrity Verification Disabler** | Bypasses Play Integrity API (SafetyNet) checks |
 | **Sensor Disabler** | Disables specific sensors for privacy |
 
 ---
