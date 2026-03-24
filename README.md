@@ -511,7 +511,7 @@ IV Disabler intercepts and answers:
 > "Yes, this app is verified" (regardless of actual status)
 
 **Installation:**
-1. Download from [GitHub](https://github.com/alex193a/PlayIntegrityDisabler) or [Xposed Module Repository](https://forum.xda-developers.com/t/module-play-integrity-disabler.4640824/)
+1. Download from [GitHub](https://github.com/Xposed-Modules-Repo/com.alex193a.ivdisabler) or [Xposed Module Repository](https://forum.xda-developers.com/t/module-play-integrity-disabler.4640824/)
 2. Patch with LSPatch
 3. Install and enable in LSPatch manager
 4. Verify with Play Integrity API Checker app from Play Store (temporarily install to test, then remove)
