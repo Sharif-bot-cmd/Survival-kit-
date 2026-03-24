@@ -774,7 +774,7 @@ adb shell pm disable com.google.android.gms/.chimera.GmsIntentOperationService
 
 ## Proof: Dumpsys Output
 
-Here is the actual `dumpsys device_policy` output from a successfully configured device:
+Here is the example `dumpsys device_policy` output:
 
 ```bash
 $ adb shell dumpsys device_policy
