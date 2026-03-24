@@ -1,4 +1,4 @@
-# Android Freedom Survival Kit
+l# Android Freedom Survival Kit
 ## Complete Setup Guide for Google's 2026 Android Lockdown
 
 ### ⚠️ IMPORTANT DISCLAIMER
@@ -771,51 +771,6 @@ adb shell pm disable com.google.android.gms/.chimera.GmsIntentOperationService
 ```
 
 ---
-
-## Proof: Dumpsys Output
-
-Here is the example `dumpsys device_policy` output:
-
-```bash
-$ adb shell dumpsys device_policy
-
-Current Device Policy Manager state:
-  Immutable state:
-    mHasFeature=true
-    mIsWatch=false
-    mIsAutomotive=false
-    mHasTelephonyFeature=true
-
-  Device Owner:
-    admin=ComponentInfo{com.rosan.dhizuku/com.rosan.dhizuku.server.DhizukuDAReceiver}
-    package=com.rosan.dhizuku
-    isOrganizationOwnedDevice=true
-    User ID: 0
-
-  Enabled Device Admins (User 0):
-    com.rosan.dhizuku/.server.DhizukuDAReceiver:
-      policies:
-        wipe-data
-        reset-password
-        limit-password
-        force-lock
-        set-global-proxy
-        encrypted-storage
-        disable-camera
-      mCommonCriteriaMode=true  ← KEY: Government-grade security active
-
-  Global Policies:
-    UserRestrictionPolicyKey userRestriction_no_control_apps:
-      BooleanPolicyValue { mValue= true }  ← KEY: Blocks Google from changing settings
-    UserRestrictionPolicyKey userRestriction_no_config_cell_broadcasts:
-      BooleanPolicyValue { mValue= true }  ← KEY: Blocks carrier OTA updates
-    UserRestrictionPolicyKey userRestriction_no_factory_reset:
-      BooleanPolicyValue { mValue= true }  ← KEY: Prevents remote wipe
-    UserRestrictionPolicyKey userRestriction_no_ultra_wideband_radio:
-      BooleanPolicyValue { mValue= true }  ← KEY: Disables hardware tracking
-
-Encryption Status: per-user  ← KEY: FBE active
-```
 
 ### What This Proves
 
