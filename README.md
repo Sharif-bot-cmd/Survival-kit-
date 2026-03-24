@@ -452,7 +452,7 @@ App runs happily, never knows the difference
 - Spoofer tells apps "bootloader is locked"
 
 **Installation:**
-1. Download from [GitHub](https://github.com/Blays/BootloaderSpoofer)
+1. Download from [GitHub](https://github.com/Xposed-Modules-Repo/es.chiteroman.bootloaderspoofer)
 2. Patch with LSPatch
 3. Install and enable
 
