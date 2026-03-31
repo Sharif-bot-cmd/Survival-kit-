@@ -1,4 +1,4 @@
-l# Android Freedom Survival Kit
+# Android Freedom Survival Kit
 ## Complete Setup Guide for Google's 2026 Android Lockdown
 
 ### ⚠️ IMPORTANT DISCLAIMER
@@ -16,14 +16,24 @@ This guide is for **educational/survival purposes only**. You are responsible fo
 7. [Step 3: ADB/Shell Privileges (Shizuku)](#step-3-adbshell-privileges-shizuku)
 8. [Step 4: App Modification Framework (LSPatch)](#step-4-app-modification-framework-lspatch)
 9. [Step 5: Essential Xposed Modules](#step-5-essential-xposed-modules)
+   - [5.1 Core Patch](#core-patch)
+   - [5.2 FakeGapps](#fakegapps)
+   - [5.3 TrustMeAlready](#trustmealready)
+   - [5.4 Bootloader Spoofer](#bootloader-spoofer)
+   - [5.5 NoVPNDetect](#novpndetect)
+   - [5.6 Sensor Disabler](#sensor-disabler)
+   - [5.7 FuckGoogleLicense](#fuckgooglelicense)
+   - [5.8 DAX (Dhizuku API for Xposed)](#dax-dhizuku-api-for-xposed)
 10. [Step 6: System Debloating (Canta)](#step-6-system-debloating-canta)
 11. [Step 7: File-Based Encryption (FBE)](#step-7-file-based-encryption-fbe)
 12. [Step 8: Enable Common Criteria Mode](#step-8-enable-common-criteria-mode)
-13. [Step 9: Final Verification](#step-9-final-verification)
-14. [Maintaining Your Freedom](#maintaining-your-freedom)
-15. [Troubleshooting](#troubleshooting)
-16. [Proof: Dumpsys Output](#proof-dumpsys-output)
-17. [Glossary](#glossary)
+13. [Step 9: Cellular Security (Sentry Radio)](#step-9-cellular-security-sentry-radio)
+14. [Step 10: Network Lockdown (Owndroid + Rethink DNS)](#step-10-network-lockdown-owndroid--rethink-dns)
+15. [Step 11: Final Verification](#step-11-final-verification)
+16. [Maintaining Your Freedom](#maintaining-your-freedom)
+17. [Troubleshooting](#troubleshooting)
+18. [Proof: Dumpsys Output](#proof-dumpsys-output)
+19. [Glossary](#glossary)
 
 ---
 
@@ -128,8 +138,10 @@ Google claims there will be an "advanced flow" for experienced users. **Don't be
 | **Shizuku** | ADB/Shell privileges | [GitHub](https://github.com/RikkaApps/Shizuku) |
 | **LSPatch** | No-root Xposed framework | [GitHub](https://github.com/LSPosed/LSPatch) |
 | **Canta** | System app debloating | [F-Droid](https://f-droid.org/packages/io.github.samolego.canta/) |
-| **Owndroid** | App component control | [GitHub](https://github.com/bintianqi/owndroid) |
+| **Owndroid** | App component control, VPN lockdown | [GitHub](https://github.com/bintianqi/owndroid) |
 | **Termux** | Terminal emulator | [F-Droid](https://f-droid.org/packages/com.termux/) |
+| **Rethink DNS** | Firewall + VPN with lockdown mode | [F-Droid](https://f-droid.org/packages/com.celzero.bravedns/) |
+| **Sentry Radio** | Cellular security, IMSI catcher detection | [GitHub](https://github.com/fzer0x/imsicatcher-detector) |
 
 ### Xposed Modules (via LSPatch)
 
@@ -141,6 +153,8 @@ Google claims there will be an "advanced flow" for experienced users. **Don't be
 | **Bootloader Spoofer** | Hides bootloader modifications |
 | **NoVPNDetect** | Prevents apps from detecting VPN usage |
 | **Sensor Disabler** | Disables specific sensors for privacy |
+| **FuckGoogleLicense** | Bypasses Google Service License Verification |
+| **DAX** | Dhizuku API for Xposed (grants Device Owner privileges to modules) |
 
 ---
 
@@ -365,6 +379,15 @@ Install modified APK
 Xposed modules load inside app
 ```
 
+### Critical Understanding: Self-Patching vs. Embedding
+
+| Method | How It Works | Scope |
+|--------|--------------|-------|
+| **Self-patch module** | Patch the module APK itself with LSPatch | Module runs independently, can hook system-wide via Shizuku |
+| **Embed module into target app** | Embed module into a specific app | Module ONLY affects that one app |
+
+**For system-wide effect, ALWAYS self-patch your modules.** LSPatch needs Shizuku service activated for system-wide hooks.
+
 ### Installation
 1. Download LSPatch from [GitHub](https://github.com/LSPosed/LSPatch/releases)
 2. Install via ADB:
@@ -373,19 +396,20 @@ Xposed modules load inside app
    ```
 3. Open LSPatch and grant Shizuku permissions
 
-### Patching Apps
+### Patching Apps (Self-Patch Method)
 1. In LSPatch, select "Patch from storage"
-2. Choose the APK you want to modify
+2. Choose the module APK you want to patch
 3. Select "Embed modules" mode
-4. Choose which Xposed modules to embed
+4. Choose which modules to embed (for DAX, embed it into other modules)
 5. LSPatch creates a modified APK
-6. Install the patched APK
+6. Install the patched module
 
 ### Important Notes
 - Patched apps have different signatures than originals
 - Cannot update via Google Play (must patch new versions)
 - Some apps detect modification (use TrustMeAlready to bypass)
 - Use Core Patch to allow installation alongside originals
+- **"System service not running" warning is normal** - modules work via Shizuku
 
 ---
 
@@ -401,9 +425,11 @@ Xposed modules load inside app
 
 **Installation:**
 1. Download from [GitHub](https://github.com/LSPosed/CorePatch)
-2. Patch Core Patch itself with LSPatch (yes, patch the module!)
+2. **Self-patch** Core Patch with LSPatch
 3. Install the patched Core Patch
 4. Enable in LSPatch manager
+
+---
 
 ### FakeGapps
 **Purpose:** Mimics Google Play Services
@@ -426,8 +452,10 @@ App runs happily, never knows the difference
 
 **Installation:**
 1. Download from [GitHub](https://github.com/whew-inc/FakeGapps)
-2. Patch with LSPatch
+2. **Self-patch** FakeGapps with LSPatch
 3. Install and enable
+
+---
 
 ### TrustMeAlready
 **Purpose:** Bypasses SSL certificate pinning
@@ -439,8 +467,10 @@ App runs happily, never knows the difference
 
 **Installation:**
 1. Download from [GitHub](https://github.com/Xposed-Modules-Repo/mfsx.xposed.trustmealready)
-2. Patch with LSPatch
+2. **Self-patch** TrustMeAlready with LSPatch
 3. Install and enable
+
+---
 
 ### Bootloader Spoofer
 **Purpose:** Hides bootloader modifications
@@ -452,8 +482,10 @@ App runs happily, never knows the difference
 
 **Installation:**
 1. Download from [GitHub](https://github.com/Xposed-Modules-Repo/es.chiteroman.bootloaderspoofer)
-2. Patch with LSPatch
+2. **Self-patch** Bootloader Spoofer with LSPatch
 3. Install and enable
+
+---
 
 ### NoVPNDetect
 **Purpose:** Prevents apps from detecting VPN usage
@@ -465,8 +497,10 @@ App runs happily, never knows the difference
 
 **Installation:**
 1. Download from [GitHub](https://github.com/Xposed-Modules-Repo/me.hoshino.novpndetect)
-2. Patch with LSPatch
+2. **Self-patch** NoVPNDetect with LSPatch
 3. Install and enable
+
+---
 
 ### Sensor Disabler
 **Purpose:** Disables specific sensors
@@ -477,8 +511,57 @@ App runs happily, never knows the difference
 
 **Installation:**
 1. Download from [GitHub](https://github.com/MrChandler/DisableProx)
-2. Patch with LSPatch
+2. **Self-patch** Sensor Disabler with LSPatch
 3. Install and enable
+
+---
+
+### FuckGoogleLicense
+**Purpose:** Bypasses Google Service License Verification
+
+**Why you need it:**
+- Many apps check with Google Play Licensing Library
+- Google could revoke licenses for "unverified" apps in 2026
+- This module intercepts license checks and returns "LICENSED"
+
+**Installation:**
+1. Download from [GitHub](https://github.com/jiguro/FuckGoogleLicense)
+2. **Self-patch** FuckGoogleLicense with LSPatch
+3. Install and enable
+
+---
+
+### DAX (Dhizuku API for Xposed)
+**Purpose:** Grants Device Owner privileges to Xposed modules
+
+**What DAX Does:**
+- Acts as a bridge between Xposed modules and Dhizuku
+- Allows modules to access Device Owner APIs
+- Critical for modules that need system-level authority
+
+**Why You Need DAX:**
+| Without DAX | With DAX |
+|-------------|----------|
+| Modules run with Shizuku privileges (UID 2000) | Modules gain Device Owner privileges |
+| Can't access Device Owner APIs | Full Device Owner access |
+| Limited to ADB-level operations | Can perform policy enforcement, wipe, lock |
+
+**Installation (Critical - DO NOT self-patch DAX):**
+1. Download DAX from [Dhizuku releases](https://github.com/iamr0s/Dhizuku-API-Xposed)
+2. **DO NOT self-patch DAX** - it's designed to be embedded
+3. When patching other modules (Core Patch, FakeGapps, etc.), **embed DAX into them**
+4. In LSPatch, select the module APK → "Embed modules" → choose DAX
+5. Install the patched module with DAX embedded
+
+**Which Modules Should Have DAX Embedded:**
+| Module | Embed DAX? | Why |
+|--------|------------|-----|
+| Core Patch | ✅ Yes | Signature bypass with Device Owner authority |
+| FakeGapps | ✅ Yes | Play Services spoofing at system policy level |
+| Bootloader Spoofer | ✅ Yes | Hide from Play Integrity API |
+| FuckGoogleLicense | ✅ Yes | License bypass at policy level |
+| TrustMeAlready | ⚠️ Optional | Works without, but can benefit |
+| NoVPNDetect | ⚠️ Optional | VPN bypass doesn't strictly need it |
 
 ---
 
@@ -628,7 +711,104 @@ mCommonCriteriaMode=true
 
 ---
 
-## Step 9: Final Verification
+## Step 9: Cellular Security (Sentry Radio)
+
+### What is Sentry Radio?
+Sentry Radio (formerly IMSICatcher Detector) detects and blocks:
+- Fake cell towers (IMSI catchers / Stingrays)
+- Cellular surveillance attempts
+- Forced downgrade attacks (2G/3G)
+- Silent SMS tracking
+- Baseband exploitation
+
+### Critical Settings to Enable (Even Without Root)
+
+| Setting | Purpose | Works Without Root? |
+|---------|---------|---------------------|
+| **Automatic Threat Mitigation** | Instantly responds to detected threats | ✅ Yes (via Xposed) |
+| **Block GSM Registrations** | Prevents 2G connection (vulnerable network) | ✅ Yes (via Xposed) |
+| **Reject A5/0 Cipher** | Blocks unencrypted cellular connections | ✅ Yes (via Xposed) |
+| **Mark Fake Cells** | Blacklists suspicious towers | ✅ Yes (via Xposed) |
+| **Force Immediate LTE** | Stays on secure 4G/5G networks | ✅ Yes (via Xposed) |
+
+### Why Xposed Is Sufficient
+Even without root, Xposed hooks into Android's telephony framework at the RIL (Radio Interface Layer) level. Your modules can:
+- Intercept network registration requests
+- Reject weak encryption ciphers
+- Block 2G connections entirely
+- Identify and blacklist fake towers
+
+### Installation
+1. Download Sentry Radio from [GitHub](https://github.com/fzer0x/SentryRadio/releases)
+2. Install via ADB:
+   ```bash
+   adb install SentryRadio-*.apk
+   ```
+3. Open Sentry Radio and enable all protection settings
+4. Grant Shizuku permissions if prompted
+
+### Verify Cellular Protection
+```bash
+adb shell dumpsys telephony.registry | grep "RegState"
+# Expected: POWER_OFF (radio disabled for protection)
+```
+
+---
+
+## Step 10: Network Lockdown (Owndroid + Rethink DNS)
+
+### Why Network Lockdown Is Critical
+Google's lockdown enforcement requires network connectivity. By controlling your network at the Device Owner level, you block:
+- Play Services updates
+- Developer verification queries
+- Remote policy changes
+- Carrier OTA pushes
+
+### The Two-Layer Approach
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  LAYER 1: Owndroid (Device Owner)                          │
+│  └── "Lockdown admin configured network"                   │
+│  └── Enforces VPN at system level                          │
+│  └── Cannot be bypassed by ANY app                         │
+├─────────────────────────────────────────────────────────────┤
+│  LAYER 2: Rethink DNS (VPN Service)                        │
+│  └── Always-on VPN lockdown enabled                        │
+│  └── Firewall rules active                                 │
+│  └── Google verification servers blocked                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Step 10.1: Configure Owndroid VPN Lockdown
+
+1. Open **Owndroid**
+2. Grant Dhizuku permissions
+3. Navigate to **Network / VPN settings**
+4. Enable **"Lockdown admin configured network"**
+5. Set Rethink DNS as the always-on VPN
+
+### Step 10.2: Configure Rethink DNS
+
+1. Install Rethink DNS from [F-Droid](https://f-droid.org/packages/com.celzero.bravedns/)
+2. Open Rethink DNS
+3. Enable **Always-on VPN**
+4. Enable **Lockdown mode** (blocks all traffic if VPN fails)
+5. Add firewall rules to block Google domains:
+   - `*.google.com/verification`
+   - `android.clients.google.com`
+   - `play.googleapis.com`
+   - `*.googleapis.com`
+
+### Verify VPN Lockdown
+```bash
+adb shell dumpsys device_policy | grep -E "(mAlwaysOnVpnPackage|mAlwaysOnVpnLockdown)"
+# Expected: com.celzero.bravedns and true
+```
+
+---
+
+## Step 11: Final Verification
 
 ### Check Device Owner
 ```bash
@@ -642,14 +822,26 @@ adb shell dumpsys device_policy | grep mCommonCriteriaMode
 ```
 Should show `true`
 
+### Check VPN Lockdown
+```bash
+adb shell dumpsys device_policy | grep -E "(mAlwaysOnVpnPackage|mAlwaysOnVpnLockdown)"
+```
+Should show `com.celzero.bravedns` and `true`
+
+### Check Cellular State
+```bash
+adb shell dumpsys telephony.registry | grep "RegState"
+```
+Should show `POWER_OFF` (radio disabled for protection)
+
 ### Check Shizuku Status
 Open Shizuku app → "Shizuku is running"
 
 ### Check LSPatch
-Open LSPatch → Should show patched apps and modules
+Open LSPatch → Should show self-patched modules as active
 
 ### Check Modules Active
-Open each patched app → Verify module functions
+Open LSPatch → Modules tab → All modules should show "Activated"
 
 ### Check Debloat
 ```bash
@@ -702,6 +894,7 @@ adb shell pm disable com.google.android.gms/.chimera.GmsIntentOperationService
 - Core Patch (new Android versions)
 - LSPatch (framework updates)
 - Xposed modules (bug fixes)
+- DAX (when Dhizuku updates)
 
 ### Regular Backups
 ```bash
@@ -739,6 +932,11 @@ adb shell dpm set-device-owner com.rosan.dhizuku/.server.DhizukuDAReceiver
 - Always enable Wireless Debugging before reboot
 - Or use ADB mode to restart: `adb shell sh /sdcard/Android/data/moe.shizuku.privileged.api/files/start.sh`
 
+### "System service not running" in LSPatch
+- **This is normal** for no-root setups
+- Modules still work system-wide via Shizuku
+- Ignore this warning
+
 ### Patched app won't install
 - Uninstall original app first
 - Use Core Patch to allow installation
@@ -752,12 +950,14 @@ adb shell dpm set-device-owner com.rosan.dhizuku/.server.DhizukuDAReceiver
 ### Banking app not working
 - Enable all modules in LSPatch
 - Use Bootloader Spoofer
+- Embed DAX into Bootloader Spoofer for Device Owner authority
 - Some banks use hardware attestation (cannot bypass)
 
 ### "Google Play Services required" error
 - FakeGapps should handle this
-- Verify FakeGapps is properly patched and enabled
+- Verify FakeGapps is properly self-patched and enabled
 - Check that Play Services is still present (factory version)
+- Embed DAX into FakeGapps for higher authority
 
 ### Play Services keeps updating
 ```bash
@@ -770,7 +970,51 @@ adb shell pm disable com.google.android.gms/.chimera.GmsIntentOperationService
 # - *.google.com/update
 ```
 
+### Cellular radio won't turn on
+- Sentry Radio may have it in POWER_OFF state
+- Open Sentry Radio → Disable "Automatic Threat Mitigation" temporarily
+- Or whitelist safe towers
+
 ---
+
+## Proof: Dumpsys Output
+
+Here is the actual `dumpsys device_policy` output from a successfully configured device:
+
+```bash
+$ adb shell dumpsys device_policy
+
+Current Device Policy Manager state:
+  Device Owner:
+    admin=ComponentInfo{com.rosan.dhizuku/com.rosan.dhizuku.server.DhizukuDAReceiver}
+    package=com.rosan.dhizuku
+    isOrganizationOwnedDevice=true
+    User ID: 0
+
+  Enabled Device Admins (User 0):
+    com.rosan.dhizuku/.server.DhizukuDAReceiver:
+      policies:
+        wipe-data
+        reset-password
+        limit-password
+        force-lock
+        set-global-proxy
+        encrypted-storage
+        disable-camera
+      mCommonCriteriaMode=true
+
+  Global Policies:
+    UserRestrictionPolicyKey userRestriction_no_control_apps:
+      BooleanPolicyValue { mValue= true }
+    UserRestrictionPolicyKey userRestriction_no_config_cell_broadcasts:
+      BooleanPolicyValue { mValue= true }
+    UserRestrictionPolicyKey userRestriction_no_factory_reset:
+      BooleanPolicyValue { mValue= true }
+    UserRestrictionPolicyKey userRestriction_no_ultra_wideband_radio:
+      BooleanPolicyValue { mValue= true }
+
+Encryption Status: per-user
+```
 
 ### What This Proves
 
@@ -793,14 +1037,17 @@ adb shell pm disable com.google.android.gms/.chimera.GmsIntentOperationService
 | **ADB** | Android Debug Bridge - tool for communicating with Android devices |
 | **AOSP** | Android Open Source Project - the open source core of Android |
 | **Common Criteria Mode** | Government-grade security standard for enterprise devices |
+| **DAX** | Dhizuku API for Xposed - grants Device Owner privileges to modules |
 | **Device Owner** | Highest privilege level on Android (enterprise feature) |
 | **FBE** | File-Based Encryption - encrypts files with user password |
 | **FOSS** | Free and Open Source Software |
 | **FRP** | Factory Reset Protection - Google's anti-theft system |
+| **IMSI Catcher** | Fake cell tower used for surveillance (Stingray) |
 | **LSPatch** | No-root Xposed framework for app modification |
 | **MDM** | Mobile Device Management - enterprise device control |
 | **OTA** | Over-The-Air - system updates delivered wirelessly |
 | **Play Integrity API** | Google's device attestation system |
+| **RIL** | Radio Interface Layer - communicates with cellular modem |
 | **RISH** | Recoverable Interactive SHell - Shizuku's terminal feature |
 | **Sideloading** | Installing apps from outside Google Play Store |
 | **SSL Pinning** | Security feature that verifies app certificates |
@@ -822,7 +1069,11 @@ adb shell pm disable com.google.android.gms/.chimera.GmsIntentOperationService
 │  ✓ Alternative stores work (F-Droid, Aurora)               │
 │  ✓ Play Services at factory version + FakeGapps            │
 │  ✓ Bootloader hidden (Netflix, banking work)               │
+│  ✓ License verification bypassed (FuckGoogleLicense)       │
+│  ✓ Modules have Device Owner authority (DAX embedded)      │
 │  ✓ Encrypted with FBE (no boot-time verification)          │
+│  ✓ Cellular attacks blocked (Sentry Radio)                 │
+│  ✓ Network locked down (Owndroid + Rethink DNS)            │
 │  ✓ Debloated (no spyware, no forced updates)               │
 │  ✓ YOURS - not Google's                                    │
 └─────────────────────────────────────────────────────────────┘
@@ -832,6 +1083,7 @@ adb shell pm disable com.google.android.gms/.chimera.GmsIntentOperationService
 - **Device Owner** is an Android Enterprise API used by thousands of companies
 - **Common Criteria Mode** is required for government and military devices
 - **ADB** is a developer tool that cannot be removed
+- **Xposed via LSPatch** uses legitimate app modification techniques
 - **Your device appears as a compliant enterprise device**, not a hacked consumer phone
 - Google cannot break these features without breaking Android for all enterprise customers
 
@@ -845,6 +1097,9 @@ You: "I still have F-Droid, ReVanced, everything"
 
 Everyone else: "I need to pay Google to develop!"
 You: "I can still share apps with friends"
+
+Everyone else: "My phone is being tracked via cellular!"
+You: "Sentry Radio blocked the IMSI catcher"
 
 Everyone else: "My phone is a brick"
 You: "My phone is still free"
